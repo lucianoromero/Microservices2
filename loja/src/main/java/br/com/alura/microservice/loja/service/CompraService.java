@@ -27,12 +27,12 @@ public class CompraService {
 	@Autowired
 	private CompraRepository compraRepository;
 
-	@HystrixCommand
+	@HystrixCommand(threadPoolKey = "getByIdThreadPoll")
 	public Compra getById(Long id) {
 		return compraRepository.findById(id).orElse(new Compra());
 	}
 
-	@HystrixCommand(fallbackMethod = "realizaCompraFallback")
+	@HystrixCommand(fallbackMethod = "realizaCompraFallback", threadPoolKey = "realizaCompraThreadPoll")
 	public Compra realizaCompra(CompraDTO compra) {
 
 		final String estado = compra.getEndereco().getEstado();
