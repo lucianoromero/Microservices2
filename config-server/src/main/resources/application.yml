@@ -7,4 +7,4 @@ spring:
       server:
         git:
           uri: https://github.com/lucianoromero/microservice-repo
-          search-paths: fornecedor
+          search-paths: fornecedor, loja
