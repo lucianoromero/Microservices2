@@ -43,15 +43,16 @@ public class CompraService {
 	public Compra realizaCompra(CompraDTO compra) {
 
 		final String estado = compra.getEndereco().getEstado();
-		
+
 		Compra compraSalva = new Compra();
 		compraSalva.setState(CompraState.RECEBIDO);
 		compraSalva.setEnderecoDestino(compra.getEndereco().toString());
 		compraRepository.save(compraSalva);
+		compra.setCompraId(compraSalva.getId());
 
 		LOG.info("Buscando informações, na API Fornecedor do fornecedor de {}", estado);
 		InfoFornecedorDTO info = fornecedorClint.getInfoPorEstado(estado);
-		
+
 		LOG.info("Realizando um pedido, na API Fornecedor");
 		InfoPedidoDTO pedido = fornecedorClint.realizaPedido(compra.getItens());
 		compraSalva.setState(CompraState.PEDIDO_REALIZADO);
@@ -75,6 +76,10 @@ public class CompraService {
 	}
 
 	public Compra realizaCompraFallback(CompraDTO compra) {
+		if (compra.getCompraId() != null) {
+			return compraRepository.findById(compra.getCompraId()).get();
+		}
+
 		Compra compraFallback = new Compra();
 		compraFallback.setEnderecoDestino(compra.getEndereco().toString());
 		return compraFallback;
